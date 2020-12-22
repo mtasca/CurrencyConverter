@@ -1,2 +1,6 @@
 # CurrencyConverter
-Currency converter service
+Currency Converter
+
+## Documentation
+
+- [**Local Setup**](docs/LocalSetup.md)
