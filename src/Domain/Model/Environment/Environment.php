@@ -49,5 +49,4 @@ final class Environment extends ValueObject
     {
         return $this->getValue() === self::TEST;
     }
-
 }

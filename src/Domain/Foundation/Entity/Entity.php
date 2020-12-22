@@ -54,5 +54,4 @@ abstract class Entity implements EntityInterface
             'data' => $this->data,
         ];
     }
-
 }

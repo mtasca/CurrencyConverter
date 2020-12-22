@@ -35,5 +35,4 @@ class LoggerProvider implements ProviderInterface
             },
         ]);
     }
-
 }

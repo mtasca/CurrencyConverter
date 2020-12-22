@@ -7,7 +7,6 @@ use Traversable;
 
 interface EntityCollectionInterface extends Traversable
 {
-
     public function getEntities() : array;
 
     public function addEntity(EntityInterface $entity) : void;

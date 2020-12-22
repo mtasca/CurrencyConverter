@@ -6,5 +6,4 @@ namespace CurrencyConverter\Application\Exception;
 
 class ApiDomainException extends \DomainException
 {
-
 }

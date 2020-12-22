@@ -26,5 +26,4 @@ class ConfigProvider implements ProviderInterface
             'config' => $config
         ]);
     }
-
 }
