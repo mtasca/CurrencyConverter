@@ -31,7 +31,12 @@ class CurrencyRepository extends BaseRepository implements CurrencyRepositoryInt
         }
 
         $data = $data[0];
-        return new Currency(new CurrencyId((int)$data['id']), $data['name'], $data['description'], $currency_iso_code, $data['iso_number']);
+        return new Currency(
+            new CurrencyId(filter_var( $data['id'], FILTER_VALIDATE_INT)),
+            $data['name'],
+            $data['description'],
+            $currency_iso_code,
+            filter_var( $data['iso_number'], FILTER_VALIDATE_INT)
+        );
     }
-
 }
