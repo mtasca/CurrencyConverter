@@ -6,6 +6,7 @@ namespace CurrencyConverter\HttpApi;
 use CurrencyConverter\HttpApi\Providers\ConfigProvider;
 use CurrencyConverter\HttpApi\Providers\LoggerProvider;
 use CurrencyConverter\HttpApi\Providers\RepositoryProvider;
+use CurrencyConverter\HttpApi\Providers\ServiceProvider;
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Psr\Log\LoggerInterface;
@@ -101,6 +102,7 @@ class HttpApplication
         ConfigProvider::addDefinition($this->container_builder);
         LoggerProvider::addDefinition($this->container_builder);
         RepositoryProvider::addDefinition($this->container_builder);
+        ServiceProvider::addDefinition($this->container_builder);
     }
 
     private function registerRoutes()

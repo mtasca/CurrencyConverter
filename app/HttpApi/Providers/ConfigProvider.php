@@ -21,7 +21,6 @@ class ConfigProvider implements ProviderInterface
             $config_array = require_once(sprintf("%s/%s", $config_path, $filename));
             $config[$config_name] = $config_array;
         }
-
         $container_builder->addDefinitions([
             'config' => $config
         ]);

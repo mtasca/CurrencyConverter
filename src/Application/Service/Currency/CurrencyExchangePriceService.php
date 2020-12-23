@@ -3,14 +3,29 @@ declare(strict_types=1);
 
 namespace CurrencyConverter\Application\Service\Currency;
 
+use CurrencyConverter\Domain\Foundation\Service\CurrencyExchangePriceClientInterface;
 use CurrencyConverter\Domain\Model\Currency\Currency;
-use CurrencyConverter\Infraestructure\MySql\CurrencyRepository;
 
 class CurrencyExchangePriceService
 {
 
+    /**
+     * @var CurrencyExchangePriceClientInterface
+     */
+    private $exchange_price_client;
+
+    /**
+     * CurrencyExchangePriceService constructor.
+     * @param CurrencyExchangePriceClientInterface $exchange_price_client
+     */
+    public function __construct(CurrencyExchangePriceClientInterface $exchange_price_client)
+    {
+        $this->exchange_price_client = $exchange_price_client;
+    }
+
+
     public function getExchangePrice(Currency $base_currency, Currency $destination_currency) : float
     {
-        return rand(0,1000)/500;
+        return $this->exchange_price_client->getExchangePrice($base_currency, $destination_currency);
     }
 }
