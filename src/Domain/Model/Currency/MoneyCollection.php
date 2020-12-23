@@ -3,35 +3,40 @@ declare(strict_types=1);
 
 namespace CurrencyConverter\Domain\Model\Currency;
 
-use CurrencyConverter\Domain\Foundation\Entity\EntityCollection;
-use CurrencyConverter\Domain\Foundation\Entity\EntityInterface;
 
-class MoneyCollection extends EntityCollection
+class MoneyCollection
 {
-
-    protected $money_collection;
+    protected $items;
 
     public function __construct()
     {
-        $this->money_collection = [];
+        $this->items = [];
     }
-
 
     public function addItem(Money $money) : void
     {
-        $this->money_collection[] = $money;
+        $this->items[] = $money;
     }
 
+    public function getItems() : array
+    {
+        return $this->items;
+    }
+
+    public function count() : int
+    {
+        return count($this->items);
+    }
 
     public function isEmpty() : bool
     {
-        return empty($this->money_collection);
+        return empty($this->items);
     }
 
     public function toArray()
     {
         $data = [];
-        foreach ($this->money_collection as $money) {
+        foreach ($this->items as $money) {
             $data[] = $money->toArray();
         }
 
