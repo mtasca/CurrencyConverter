@@ -2,7 +2,9 @@
 
 namespace CurrencyConverter\Application\Service\Currency;
 
+use CurrencyConverter\Domain\Model\Currency\Currency;
 use CurrencyConverter\Domain\Model\Currency\CurrencyAmount;
+use CurrencyConverter\Domain\Model\Currency\CurrencyId;
 use CurrencyConverter\Domain\Model\Currency\CurrencyIsoCode;
 use CurrencyConverter\Domain\Model\Currency\Money;
 use CurrencyConverter\Domain\Model\Currency\MoneyCollection;
@@ -13,40 +15,31 @@ use Doctrine\DBAL\Connection;
 
 class CurrencyConverterServiceTest extends TestCase
 {
-    private $db_read = null;
-    private $db_write = null;
     private $repository = null;
     private $exchange_price_service = null;
     private $currency_converter_service = null;
 
     protected function setUp() : void
     {
-        $this->db_read    = Mockery::mock(Connection::class)->makePartial();
-        $this->db_write   = Mockery::mock(Connection::class)->makePartial();
-        $this->repository = new CurrencyRepository($this->db_read, $this->db_write);
+        $this->repository = Mockery::mock(CurrencyRepository::class)->makePartial();
         $this->exchange_price_service = Mockery::mock(CurrencyExchangePriceService::class)->makePartial();
         $this->currency_converter_service = new CurrencyConverterService($this->repository, $this->exchange_price_service);
     }
 
-    private function mockDatabaseToReturn(array $data)
+    private function mockRepositoryToReturn()
     {
-        $this->db_read
-            ->shouldReceive('connect')->andReturn($this->db_read)
-            ->shouldReceive('createQueryBuilder')->once()->andReturn($this->db_read)
-            ->shouldReceive('select')->once()->andReturn($this->db_read)
-            ->shouldReceive('from')->once()->andReturn($this->db_read)
-            ->shouldReceive('innerJoin')->once()->andReturn($this->db_read)
-            ->shouldReceive('where')->once()->andReturn($this->db_read)
-            ->shouldReceive('setParameter')->once()->andReturn($this->db_read)
-            ->shouldReceive('andWhere')->once()->andReturn($this->db_read)
-            ->shouldReceive('setParameter')->once()->andReturn($this->db_read)
-            ->shouldReceive('setMaxResults')->once()->andReturn($this->db_read)
-            ->shouldReceive('expr')->once()->andReturn($this->db_read)
-            ->shouldReceive('quote')->once()->andReturn($this->db_read)
-            ->shouldReceive('in')->once()->andReturn($this->db_read)
-            ->shouldReceive('orderBy')->once()->andReturn($this->db_read)
-            ->shouldReceive('execute')->once()->andReturn($this->db_read)
-            ->shouldReceive('fetchAll')->once()->andReturn($data);
+        $currencies = [
+            'USD' => new Currency(new CurrencyId(1), "US Dollars", "US Dollars", new CurrencyIsoCode("USD"), "840"),
+            'ARS' => new Currency(new CurrencyId(1), "Argentine peso", "Argentine peso", new CurrencyIsoCode("ARS"), "32"),
+            'EUR' => new Currency(new CurrencyId(3), "Euro", "Euro", new CurrencyIsoCode("EUR"), "978"),
+            'GBP' => new Currency(new CurrencyId(4), "Pound sterling", "Pound sterling", new CurrencyIsoCode("GBP"), "826"),
+        ];
+
+        $this->repository
+            ->shouldReceive('getCurrencyByIsoCode')
+            ->andReturnUsing(function ($iso_code) use ($currencies){
+                return $currencies[$iso_code->getValue()];
+            });
     }
 
     private function mockGetExchangePrice(float $exchange_price)
@@ -58,17 +51,8 @@ class CurrencyConverterServiceTest extends TestCase
     {
         $exchange_price = 150.0;
         $amount = 10.0;
-        $data = [
-            [
-                "id"=>"1",
-                "name"=>"US Dollars",
-                "description"=>"US Dollars",
-                "iso_code"=>"USD",
-                "iso_number"=>"840",
-            ]
-        ];
 
-        $this->mockDatabaseToReturn($data);
+        $this->mockRepositoryToReturn();
 
         $this->mockGetExchangePrice($exchange_price);
 
@@ -86,17 +70,8 @@ class CurrencyConverterServiceTest extends TestCase
     {
         $exchange_price = 150.0;
         $amount = 10.0;
-        $data = [
-            [
-                "id"=>"1",
-                "name"=>"US Dollars",
-                "description"=>"US Dollars",
-                "iso_code"=>"USD",
-                "iso_number"=>"840",
-            ]
-        ];
 
-        $this->mockDatabaseToReturn($data);
+        $this->mockRepositoryToReturn();
 
         $this->mockGetExchangePrice($exchange_price);
 
@@ -104,7 +79,7 @@ class CurrencyConverterServiceTest extends TestCase
         $amount = new CurrencyAmount($amount);
         $currencies_code_to =[
             new CurrencyIsoCode('ARS'),
-            new CurrencyIsoCode('GPB')
+            new CurrencyIsoCode('GBP')
         ];
 
         $money_collection = $this->currency_converter_service->convertBulk($currency_code_from, $amount, ...$currencies_code_to);
@@ -122,38 +97,17 @@ class CurrencyConverterServiceTest extends TestCase
     {
         $exchange_price = 150.0;
         $amount = 10.0;
-        $data_1 = [
-            [
-                "id"=>"1",
-                "name"=>"US Dollars",
-                "description"=>"US Dollars",
-                "iso_code"=>"USD",
-                "iso_number"=>"840",
-            ]
-        ];
 
-        $data_2 = [
-            [
-                "id"=>"2",
-                "name"=>"Argentine Pesos",
-                "description"=>"Argentine Pesos",
-                "iso_code"=>"ARS",
-                "iso_number"=>"1",
-            ]
-        ];
-
-        $this->mockDatabaseToReturn($data_1);
+        $this->mockRepositoryToReturn();
 
         $this->mockGetExchangePrice($exchange_price);
 
         $currency_code_from = new CurrencyIsoCode('USD');
-        $this->mockDatabaseToReturn($data_1);
         $currency_from = $this->repository->getCurrencyByIsoCode($currency_code_from);
         $amount = new CurrencyAmount($amount);
         $money = new Money($currency_from, $amount);
 
         $currency_code_to = new CurrencyIsoCode('ARS');
-        $this->mockDatabaseToReturn($data_2);
         $currency_to = $this->repository->getCurrencyByIsoCode($currency_code_to);
 
 

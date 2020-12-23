@@ -50,7 +50,6 @@ class CurrencyConverterController extends ApiController
         $currency_code_from = new CurrencyIsoCode($body_request['from']);
         $currency_amount = new CurrencyAmount($body_request['amount']);
 
-        if(is_array($body_request['to']) && count($body_request['to']) > 0)
         $currency_codes_to = [];
         foreach ($body_request['to'] as $currency_code) {
             $currency_codes_to[] = new CurrencyIsoCode($currency_code);
