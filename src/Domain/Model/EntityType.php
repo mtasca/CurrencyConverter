@@ -5,4 +5,5 @@ namespace CurrencyConverter\Domain\Model;
 
 final class EntityType
 {
+    const CURRENCY = 'currency';
 }
