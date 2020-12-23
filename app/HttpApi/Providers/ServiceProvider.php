@@ -3,9 +3,13 @@ declare(strict_types=1);
 
 namespace CurrencyConverter\HttpApi\Providers;
 
+use CurrencyConverter\Application\Service\Currency\CurrConvClient;
 use CurrencyConverter\Application\Service\Currency\CurrencyConverterService;
+use CurrencyConverter\Application\Service\Currency\CurrencyExchangePriceService;
 use CurrencyConverter\Infraestructure\MySql\CurrencyRepository;
 use DI\ContainerBuilder;;
+
+use GuzzleHttp\Client as GuzzleClient;
 use Psr\Container\ContainerInterface;
 
 class ServiceProvider implements ProviderInterface
@@ -14,7 +18,10 @@ class ServiceProvider implements ProviderInterface
     {
         $container_builder->addDefinitions([
             CurrencyExchangePriceService::class => function (ContainerInterface $container) {
-                return new CurrencyExchangePriceService();
+                $client_params = $container->get('config')['currconv'];
+                return new CurrencyExchangePriceService(
+                    new CurrConvClient(new GuzzleClient(), $client_params['base_url'], $client_params['api_key'])
+                );
             },
         ]);
         $container_builder->addDefinitions([
