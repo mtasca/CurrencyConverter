@@ -156,7 +156,7 @@ Content-type: application/json
 }
 ```
 
-## <a name="POST-convert-bulk"></a>Sum Currencies
+## <a name="POST-sum"></a>Sum Currencies
 Sum Currencies
 
 ### Request
