@@ -122,6 +122,10 @@ class HttpApplication
                 '/currency/convert_bulk',
                 Controller\CurrencyConverterController::class . ':convertBulk'
             );
+            $group->post(
+                '/currency/sum',
+                Controller\CurrencyCalculatorController::class . ':sum'
+            );
         });
     }
 }

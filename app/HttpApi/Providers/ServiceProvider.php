@@ -31,10 +31,13 @@ class ServiceProvider implements ProviderInterface
                     $container->get(CurrencyExchangePriceService::class)
                 );
             },
+        ]);
+
+        $container_builder->addDefinitions([
             CurrencyCalculatorService::class => function (ContainerInterface $container) {
                 return new CurrencyCalculatorService(
                     $container->get(CurrencyRepository::class),
-                    $container->get(CurrencyExchangePriceService::class)
+                    $container->get(CurrencyConverterService::class)
                 );
             },
         ]);
