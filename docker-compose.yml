@@ -6,7 +6,7 @@ volumes:
 
 services:
     slim:
-        image: php:7-alpine
+        image: guzhavin/php-fpm-mysql
         working_dir: /var/www
         command: php -S 0.0.0.0:8080 public/app_dev.php
         environment:
@@ -15,3 +15,16 @@ services:
             - 8080:8080
         volumes:
             - .:/var/www
+    database:
+        image: mysql:5.7
+        ports:
+            - "33061:3306"
+        command: --init-file /data/application/init.sql
+        volumes:
+            - ./data/application/init.sql:/data/application/init.sql
+        environment:
+            MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: currency_converter
+            MYSQL_USER: currency_converter
+            MYSQL_PASSWORD: currency_converter

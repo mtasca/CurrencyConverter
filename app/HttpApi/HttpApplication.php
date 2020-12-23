@@ -5,6 +5,7 @@ namespace CurrencyConverter\HttpApi;
 
 use CurrencyConverter\HttpApi\Providers\ConfigProvider;
 use CurrencyConverter\HttpApi\Providers\LoggerProvider;
+use CurrencyConverter\HttpApi\Providers\RepositoryProvider;
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Psr\Log\LoggerInterface;
@@ -13,6 +14,7 @@ use Slim\ResponseEmitter;
 use CurrencyConverter\Application\Handlers\HttpErrorHandler;
 use CurrencyConverter\Application\Handlers\ShutdownHandler;
 use CurrencyConverter\Domain\Model\Environment\Environment;
+use Slim\Routing\RouteCollectorProxy;
 
 class HttpApplication
 {
@@ -98,6 +100,7 @@ class HttpApplication
     {
         ConfigProvider::addDefinition($this->container_builder);
         LoggerProvider::addDefinition($this->container_builder);
+        RepositoryProvider::addDefinition($this->container_builder);
     }
 
     private function registerRoutes()
@@ -106,5 +109,17 @@ class HttpApplication
             '/service/health',
             Controller\ServiceController::class . ':health'
         );
+
+        // API v1 routes
+        $this->app->group('/api/v1', function (RouteCollectorProxy $group) {
+            $group->post(
+                '/currency/convert',
+                Controller\CurrencyConverterController::class . ':convertOne'
+            );
+            $group->post(
+                '/currency/convert_bulk',
+                Controller\CurrencyConverterController::class . ':convertBulk'
+            );
+        });
     }
 }

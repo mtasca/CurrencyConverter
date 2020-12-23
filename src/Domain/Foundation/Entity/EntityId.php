@@ -21,7 +21,7 @@ abstract class EntityId implements EntityIdInterface
 
         if (!$this->isValid($id)) {
             throw new InvalidArgumentValueException(sprintf(
-                'invalid id %s', $id
+                'Invalid ID %s', $id
             ));
         }
 
